@@ -1,0 +1,45 @@
+﻿@page "/yourBooks"
+@inject MyLibrary Library
+@rendermode InteractiveServer
+
+<PageTitle>Your Books</PageTitle>
+
+<h1>Your Books</h1>
+
+<div class="book-shelf">
+    @for (int i = 0; i < Library.checkedOutBooks.Count; i++)
+    {
+        var book = Library.checkedOutBooks[i];
+        <div class="book" style="background-color: @(string.IsNullOrWhiteSpace(book) ? "lightgray" : AvailableColors[i])">
+            <p>@(string.IsNullOrWhiteSpace(book) ? "Empty Space" : book)</p>
+        </div>
+    }
+</div>
+
+<form @onsubmit="PreventFormSubmission">
+    <input type="text" @bind="NewBookTitle" placeholder="enter book title" />
+    <button @onclick="CheckInBooks" type="submit"> Check In Book</button>
+</form>
+
+<p>@message</p>
+
+@code {
+
+    private string NewBookTitle {get; set;} = string.Empty;
+    private string message = string.Empty;
+
+    private readonly List<string> AvailableColors = new()
+    {
+        "#FD8A8A", "#FFCBCB", "#9EA1D4", "#F1F7B5", "#A8D1D1"
+    };
+
+    void CheckInBooks() {
+        if(!string.IsNullOrWhiteSpace(NewBookTitle)) {
+            message = Library.CheckInBook(NewBookTitle);
+            NewBookTitle = string.Empty;
+        }        
+    }
+
+    private void PreventFormSubmission() {}
+
+}

@@ -1,0 +1,60 @@
+﻿@page "/"
+@inject MyLibrary Library
+@rendermode InteractiveServer
+
+<PageTitle>Library</PageTitle>
+
+<h1>Library</h1>
+
+<div class="book-shelf">
+    @for (int i = 0; i < Library.bookTitles.Length; i++)
+    {
+        var book = Library.bookTitles[i];
+        <div class="book" style="background-color: @(string.IsNullOrWhiteSpace(book) ? "lightgray" : AvailableColors[i])">
+            <p>@(string.IsNullOrWhiteSpace(book) ? "Empty Space" : book)</p>
+        </div>
+    }
+</div>
+
+<form @onsubmit="PreventFormSubmission">
+    <input type="text" @bind="NewBookTitle" placeholder="enter book title" />
+    <button @onclick="AddBooks" type="submit"> Add Book</button>
+    <button @onclick="RemoveBooks" type="submit"> Remove Book</button>
+    <button @onclick="CheckOutBooks" type="submit"> Check Out Book</button>
+</form>
+
+<p>@message</p>
+
+
+@code {
+    private string NewBookTitle {get; set;} = string.Empty;
+    private string message = string.Empty;
+    private readonly List<string> AvailableColors = new()
+    {
+        "#FD8A8A", "#FFCBCB", "#9EA1D4", "#F1F7B5", "#A8D1D1"
+    };
+
+    void AddBooks() {
+        if(!string.IsNullOrWhiteSpace(NewBookTitle)) {
+            message = Library.AddBook(NewBookTitle);
+            NewBookTitle = string.Empty;
+        }        
+    }
+
+    void RemoveBooks() {
+        if(!string.IsNullOrWhiteSpace(NewBookTitle)) {
+            message = Library.RemoveBook(NewBookTitle);
+            NewBookTitle = string.Empty;
+        }        
+    }
+
+    void CheckOutBooks() {
+        if(!string.IsNullOrWhiteSpace(NewBookTitle)) {
+            message = Library.CheckOutBook(NewBookTitle);
+            NewBookTitle = string.Empty;
+        }        
+    }
+
+    private void PreventFormSubmission() {}
+
+}
